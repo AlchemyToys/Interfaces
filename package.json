@@ -1,0 +1,22 @@
+{
+  "name": "alchemy.interfaces",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AlchemyToys/Interfaces.git"
+  },
+  "author": "Roman Semko",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AlchemyToys/Interfaces/issues"
+  },
+  "homepage": "https://github.com/AlchemyToys/Interfaces#readme",
+  "dependencies": {
+    "@openzeppelin/contracts": "^3.4.1"
+  }
+}

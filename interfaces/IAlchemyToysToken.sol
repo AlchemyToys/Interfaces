@@ -1,16 +1,19 @@
-pragma solidity ^0.6.0;
+pragma solidity 0.8.4;
 pragma experimental ABIEncoderV2;
 
 // SPDX-License-Identifier: MIT
 
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/IERC721Metadata.sol";
-import "@openzeppelin/contracts/token/ERC721/IERC721Enumerable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
 
-/// @title AlchemyToysToken - Game Master Token ERC20 implementation
+/// @title AlchemyToysToken - Game Ace Token ERC20 implementation
 /// @notice Simple implementation of a {ERC20} token to be used as
-// Game Master Token (GMT)
+// Game Ace Token (GAT)
 interface IAlchemyToysToken is IERC721, IERC721Metadata, IERC721Enumerable {
+    /// @notice Returns URI to contract'S API endpoint
+    function contractURI() external view returns (string memory);
+
     /// @notice Returns configuration options of the ATT contract
     /// @return levels configuration array
     /// @return base of the levels - how many tokens the first level has
@@ -61,6 +64,26 @@ interface IAlchemyToysToken is IERC721, IERC721Metadata, IERC721Enumerable {
     /// @return boolean flag whether the token is special
     function isSpecialToken(uint256 tokenId) external view returns (bool);
 
+    /// @notice Returns current incremental counter for given level and id
+    /// @param level of the token to be checked
+    /// @param id on that level to be checked (0...max for that level)
+    /// @return boolean flag whether the token is special
+    function getCurrentNumber(uint256 level, uint256 id)
+        external
+        view
+        returns (uint256);
+
+    /// @notice returns a range of tokens for the given address
+    /// @param owner address of the tokens
+    /// @param start index of the tokens
+    /// @param length of the array to return
+    /// @return a list of tokenIDs
+    function tokenOfOwnerByIndexRange(
+        address owner,
+        uint256 start,
+        uint256 length
+    ) external view returns (uint256[] memory);
+
     /// @notice Mints a new token for the specified address
     /// @dev can only be performed by owner of the contract, fails if level or id is overflown
     /// @param addr to receive the token
@@ -72,6 +95,13 @@ interface IAlchemyToysToken is IERC721, IERC721Metadata, IERC721Enumerable {
         uint256 id,
         uint256 level
     ) external returns (uint256 tokenID);
+
+    /// @notice Mints a new special token for the specified address
+    /// @dev can only be performed by creator of the contract, fails if id is < 2
+    /// @param id of the special token type, should be > 1 (no enlightenment/godhood!)
+    /// @param addr to receive the token
+    /// @return tokenID of the newly created token
+    function giveSpecial(address addr, uint256 id) external returns (uint256 tokenID);
 
     /// @notice Mints new  non-special tokens for the specified address
     /// @dev used for testing purposes only

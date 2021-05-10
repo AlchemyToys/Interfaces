@@ -1,5 +1,4 @@
-pragma solidity 0.6.12;
-
+pragma solidity 0.8.4;
 // SPDX-License-Identifier: UNLICENSED
 
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -15,6 +14,7 @@ interface ITimer {
     function changeCycle() external returns (bool);
 
     /// @notice Increases the epoch by one
+    /// @dev only owners of the contract can change epochs
     function changeEpoch() external;
 
     /// @notice returns current cycle

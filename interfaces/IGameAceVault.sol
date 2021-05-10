@@ -1,26 +1,26 @@
-pragma solidity 0.6.12;
+pragma solidity 0.8.4;
 
 // SPDX-License-Identifier: UNLICENSED
 
-/// @title Vault for locking GMT tockens to participate in game treasury distribution
+/// @title Vault for locking GAT tokens to participate in game treasury distribution
 /// @notice Explain to an end user what this does
 /// @dev Explain to a developer any extra details
-interface IGameMasterVault {
+interface IGameAceVault {
     /// @notice Used by the game to add funds into the vault for the current epoch
     receive() external payable;
 
     /// @notice Used by the game to add funds into the vault for the current epoch
     function grant() external payable;
 
-    /// @notice Locks the given amount of GMT tokens in the vault.
+    /// @notice Locks the given amount of GAT tokens in the vault.
     /// The lock epoch (after which the sender is eligible for interests)
     /// is updated to the next epoch.
     /// Any pending interests for eligible past epochs are automatically paid out to
     /// prevent any loss.
-    /// @param value How many GMT tockens to lock.
+    /// @param value How many GAT tockens to lock.
     function lock(uint256 value) external;
 
-    /// @notice unlocks the GMT tokens, returning them back to the sender.
+    /// @notice unlocks the GAT tokens, returning them back to the sender.
     /// Any pending interests for eligible past epochs are automatically paid out to
     /// prevent any loss.
     function unlock() external;
@@ -71,17 +71,17 @@ interface IGameMasterVault {
     /// @return epoch
     function getEpoch() external view returns (uint256 epoch);
 
-    /// @notice Returns total of GMT tokens and ether still locked/unpaid for the current epoch
-    /// @return tokens sum of GMT
+    /// @notice Returns total of GAT tokens and ether still locked/unpaid for the current epoch
+    /// @return tokens sum of GAT
     /// @return eth sum
     function getEpochVault()
         external
         view
         returns (uint256 tokens, uint256 eth);
 
-    /// @notice Returns total of GMT tokens and ether still locked/unpaid a the given epoch
+    /// @notice Returns total of GAT tokens and ether still locked/unpaid a the given epoch
     /// @param epoch to be checked
-    /// @return tokens sum of GMT
+    /// @return tokens sum of GAT
     /// @return eth sum
     function getEpochVault(uint256 epoch)
         external
@@ -92,7 +92,7 @@ interface IGameMasterVault {
     /// @param addr address of the sender locking the amount
     /// @param epoch starting from which the tokens will be eligible for interests
     /// @param value being locked
-    /// @param totalValue sum of all currently locked GMT tokens for the given address
+    /// @param totalValue sum of all currently locked GAT tokens for the given address
     event Lock(
         address indexed addr,
         uint256 epoch,
@@ -100,8 +100,8 @@ interface IGameMasterVault {
         uint256 totalValue
     );
 
-    /// @notice Emitted when someone unlocks GMT tokens
-    /// @param addr of the sender that unlocks the GMT tokens
+    /// @notice Emitted when someone unlocks GAT tokens
+    /// @param addr of the sender that unlocks the GAT tokens
     /// @param totalValue amount being unlocked
     event Unlock(address indexed addr, uint256 totalValue);
 

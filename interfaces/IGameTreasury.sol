@@ -1,4 +1,4 @@
-pragma solidity 0.6.12;
+pragma solidity 0.8.4;
 
 // SPDX-License-Identifier: UNLICENSED
 
@@ -21,10 +21,6 @@ interface IGameTreasury {
     /// @return pctProphet
     function getPctProphet() external view returns (uint256);
 
-    /// @notice returns turn fees in LINK token representation. These neven change and are static.
-    /// @return turnLinkFee
-    function getTurnLINKFee() external view returns (uint256);
-
     /// @notice returns Turn fees in ether token representation.
     /// These change each cycle, for example.
     /// depending on the current UniSwap exchange rate.
@@ -36,24 +32,21 @@ interface IGameTreasury {
     /// @return shamans ethereum value to distribute
     /// @return winners ethereum value to distribute
     /// @return prophet ethereum value to distribute
-    /// @return linkReserve how much is kept in treasury for possible LINK purchases
     /// @return templeReserve how much is kept in treasury as a seed for the next epoch,
     ///         it is the rest after deducting all the other positions above
-    function getTreasuryDistribution()
+    function getTreasuryDistributions()
         external
         view
         returns (
             uint256 shamans,
             uint256 winners,
             uint256 prophet,
-            uint256 linkReserve,
             uint256 templeReserve
         );
 
     /// @notice Check if the provided address
     /// @dev Should only be accessible by conract owner
-    /// @param addr that has to have enough LINK
-    function ensureFees(address addr) external payable;
+    function ensureFees() external payable;
 
     /// @notice Check for the current exchange rate and update the turnFee
     /// @dev Should only be accessible by conract owner
@@ -62,5 +55,6 @@ interface IGameTreasury {
     /// @notice Pays provided sum to the given address
     /// @param addr address to be paid to
     /// @param value to be transferred
-    function pay(address payable addr, uint256 value) external;
+    /// @return whether the transfer has been made
+    function pay(address payable addr, uint256 value) external returns (bool);
 }

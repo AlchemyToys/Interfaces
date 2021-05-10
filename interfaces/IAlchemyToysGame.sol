@@ -1,4 +1,4 @@
-pragma solidity ^0.6.0;
+pragma solidity 0.8.4;
 pragma experimental ABIEncoderV2;
 
 // SPDX-License-Identifier: MIT
@@ -13,7 +13,6 @@ interface IAlchemyToysGame {
         uint256 timestamp;
         address payable addr;
         ActionType typ;
-        bool done;
         uint256[] input;
         uint256[] output;
     }
@@ -104,7 +103,7 @@ interface IAlchemyToysGame {
     3.  - Burn the enlightenment card token
     4.  - Give the godhood token
     5.  - Award part of the treasure as dictated by the distribution.
-    6. Pay the temple shamans (into the GMT vault)
+    6. Pay the temple shamans (into the GAT vault)
     7. Pay the prophet
     8. Start a new epoch
      */
@@ -145,31 +144,6 @@ interface IAlchemyToysGame {
         view
         returns (uint256 index);
 
-    /// @notice Get the count of all prayers made by the given address
-    /// @param addr address to check the log for
-    /// @param history flag whether to check the history log or pending actions queue
-    /// @return count of the addresse's actions in the log
-    function actionsCount(address addr, bool history)
-        external
-        view
-        returns (uint256 count);
-
-    /// @notice Get the addresse's prayer at the given index
-    /// @param addr address to be checked
-    /// @param index of the prayer. You can call "prayersCount" first to get the boundaries.
-    /// @param history flag whether to check history log or the pending queue
-    /// @return action
-    function actionAt(
-        address addr,
-        uint256 index,
-        bool history
-    ) external view returns (Action memory);
-
-    /// @notice Get the sender's prayer by the given key
-    /// @param key of the prayer
-    /// @return Action
-    function actionByKey(uint256 key) external view returns (Action memory);
-
     /// @notice Returns the count of enlightened players in the given epoch.
     /// @param epoch to be checked, 0 = current
     /// @return count of the enlightened payers
@@ -187,6 +161,23 @@ interface IAlchemyToysGame {
         external
         view
         returns (uint256 enlightenedTokenId);
+
+    /// @notice Returns current enlightment stats
+    /// @return tokenIds of the enlightment tokens
+    /// @return owners of the enlightment tokens
+    /// @return sacrificeIndexes of those tokens
+    /// @return sacrificeCycles when those tokens have been sacrificed
+    /// @return sacrificeIndex own current sacrifice index of unfinished enlightenment
+    function getEnlightenmentBreakdown()
+        external
+        view
+        returns (
+            uint256[] memory tokenIds,
+            address[] memory owners,
+            uint256[] memory sacrificeIndexes,
+            uint256[] memory sacrificeCycles,
+            uint256 sacrificeIndex
+        );
 
     /// @notice Gets melting recipe for the given token pair and epoch
     /// @param token1Id of the token to melt
@@ -208,8 +199,18 @@ interface IAlchemyToysGame {
             uint256 id
         );
 
+    /// @notice Returns proportions of winnings to be paid given the total amount and winner sacrifice indexes#
+    /// @dev due to rounding errors, the total payout might be slightly less than winnerShare
+    /// @param winnerShare the total sum of winnings to be distributed among winners
+    /// @param si array of sacrifice indexes of the winners
+    /// @return array of shares for each respective winner
+    function estimateWinnerPayouts(uint256 winnerShare, uint256[] memory si) external pure returns(uint256[] memory);
+
     /// @notice Emitted when something happens during the game such as:
     /// Pray, Melt, Sacrifice, Proclaim, Ascend. Check ActionTypes and Action.
-    /// The key can be used to get the action details with actionByKey function.
-    event Log(address addr, uint256 key);
+    event Pray(address indexed addr, uint256[] tokenIds);
+    event Melt(address indexed addr, uint256[] meltedIds, uint256[] tokenIds, uint256 indexed epoch);
+    event Sacrifice(address indexed addr, uint256[] tokenIds);
+    event Enlighten(address indexed addr, uint256 indexed tokenId, uint256 indexed enlightenLevel);
+    event Ascend(address indexed addr, uint256 indexed tokenId);
 }
